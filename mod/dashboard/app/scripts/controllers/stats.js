@@ -24,11 +24,13 @@ angular.module('etcdStats', ['ngRoute', 'etcd'])
     EtcdV1.getStat('leader').get().success(function(data) {
       $scope.leaderStats = data;
       $scope.followers = [];
+      $scope.followerNames = [];
       $.each(data.followers, function(index, value) {
         value.name = index;
         $scope.followers.push(value);
+        $scope.followerNames.push(value.name);
       });
-      drawGraph();
+      drawCubism();
     });
   }
 
@@ -52,6 +54,47 @@ angular.module('etcdStats', ['ngRoute', 'etcd'])
       });
     }
     parse(statsVega);
+  }
+
+  function drawCubism () {
+    var context = cubism.context()
+        .serverDelay(.25 * 1000)
+        .step(1 * 1000)
+        .size(parseInt($($scope.graphContainer).width()));
+
+    d3.select("#latency").selectAll(".axis")
+        .data(["top", "bottom"])
+      .enter().append("div")
+        .attr("class", function(d) { return d + " axis"; })
+        .each(function(d) { d3.select(this).call(context.axis().ticks(12).orient(d)); });
+
+    d3.select("#latency").append("div")
+        .attr("class", "rule")
+        .call(context.rule());
+
+    d3.select("#latency .etcd-graph-content").selectAll(".horizon")
+        .data($scope.followerNames.map(stock))
+      .enter().append("div", ".bottom")
+        .attr("class", "horizon")
+      .call(context.horizon());
+
+    context.on("focus", function(i) {
+      d3.selectAll(".value").style("right", i == null ? null : context.size() - i + "px");
+    });
+
+    // Replace this with context.graphite and graphite.metric!
+    function stock(name) {
+      var format = d3.time.format("%d-%b-%y");
+      return context.metric(function(start, stop, step, callback) {
+        var value = null;
+        $.each($scope.followers, function(index, follower) {
+          if(follower.name == name) {
+            value = follower.latency.current;
+          }
+        });
+        callback(null, [value]);
+      }, name);
+    }
   }
 
   $scope.showTable = function() {

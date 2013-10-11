@@ -587,6 +587,97 @@ body {
 			-moz-box-sizing: border-box;
 		}
 
+			.etcd-container.etcd-stats .etcd-graph .etcd-graph-container .group {
+			  margin-bottom: 1em;
+			}
+
+			.etcd-container.etcd-stats .etcd-graph .etcd-graph-container .axis {
+			  font: 10px sans-serif;
+			  position: absolute;
+			  pointer-events: none;
+			  z-index: 2;
+			}
+
+			.etcd-container.etcd-stats .etcd-graph .etcd-graph-container .axis text {
+			  -webkit-transition: fill-opacity 250ms linear;
+			}
+
+			.etcd-container.etcd-stats .etcd-graph .etcd-graph-container .axis path {
+			  display: none;
+			}
+
+			.etcd-container.etcd-stats .etcd-graph .etcd-graph-container .axis line {
+			  stroke: #000;
+			  shape-rendering: crispEdges;
+			}
+
+			.etcd-container.etcd-stats .etcd-graph .etcd-graph-container .axis.top {
+			  background-image: linear-gradient(top, #fff 0%, rgba(255,255,255,0) 100%);
+			  background-image: -o-linear-gradient(top, #fff 0%, rgba(255,255,255,0) 100%);
+			  background-image: -moz-linear-gradient(top, #fff 0%, rgba(255,255,255,0) 100%);
+			  background-image: -webkit-linear-gradient(top, #fff 0%, rgba(255,255,255,0) 100%);
+			  background-image: -ms-linear-gradient(top, #fff 0%, rgba(255,255,255,0) 100%);
+			  top: 0px;
+			  padding: 0 0 24px 0;
+			}
+
+			.etcd-container.etcd-stats .etcd-graph .etcd-graph-container .axis.bottom {
+			  background-image: linear-gradient(bottom, #fff 0%, rgba(255,255,255,0) 100%);
+			  background-image: -o-linear-gradient(bottom, #fff 0%, rgba(255,255,255,0) 100%);
+			  background-image: -moz-linear-gradient(bottom, #fff 0%, rgba(255,255,255,0) 100%);
+			  background-image: -webkit-linear-gradient(bottom, #fff 0%, rgba(255,255,255,0) 100%);
+			  background-image: -ms-linear-gradient(bottom, #fff 0%, rgba(255,255,255,0) 100%);
+			  bottom: 0px;
+			  padding: 24px 0 0 0;
+			}
+
+			.etcd-container.etcd-stats .etcd-graph .etcd-graph-container .horizon {
+			  border-bottom: solid 1px #000;
+			  overflow: hidden;
+			  position: relative;
+			}
+
+			.etcd-container.etcd-stats .etcd-graph .etcd-graph-container .horizon {
+			  border-top: solid 1px #000;
+			  border-bottom: solid 1px #000;
+			}
+
+			.etcd-container.etcd-stats .etcd-graph .etcd-graph-container .horizon + .horizon {
+			  border-top: none;
+			}
+
+			.etcd-container.etcd-stats .etcd-graph .etcd-graph-container .horizon canvas {
+			  display: block;
+			}
+
+			.etcd-container.etcd-stats .etcd-graph .etcd-graph-container .horizon .title,
+			.etcd-container.etcd-stats .etcd-graph .etcd-graph-container .horizon .value {
+			  bottom: 0;
+			  line-height: 30px;
+			  margin: 0 6px;
+			  position: absolute;
+			  text-shadow: 0 1px 0 rgba(255,255,255,.5);
+			  white-space: nowrap;
+			}
+
+			.etcd-container.etcd-stats .etcd-graph .etcd-graph-container .horizon .title {
+			  left: 0;
+			}
+
+			.etcd-container.etcd-stats .etcd-graph .etcd-graph-container .horizon .value {
+			  right: 0;
+			}
+
+			.etcd-container.etcd-stats .etcd-graph .etcd-graph-container .line {
+			  background: #000;
+			  z-index: 2;
+			}
+
+			.etcd-container.etcd-stats .etcd-graph .etcd-graph-content {
+				position: absolute;
+				top: 28px;
+			}
+
 	.etcd-container.etcd-stats table .etcd-latency {
 		width: 50%;
 	}
