@@ -178,7 +178,7 @@ However, the watch command can do more than this. Using the the index we can wat
 Let's try to watch for the set command of index 6 again:
 
 ```sh
-curl -L http://127.0.0.1:4001/v1/watch/foo -d index=7
+curl -L http://127.0.0.1:4001/v1/watch/foo -d index=6
 ```
 
 The watch command returns immediately with the same response as previous.
@@ -354,8 +354,8 @@ A similar argument `-sl` is used to setup the listening address for the server p
 Let the join two more nodes to this cluster using the -C argument:
 
 ```sh
-./etcd -c 127.0.0.1:4002 -s 127.0.0.1:7002 -C 127.0.0.1:7001 -d nodes/node2 -n node2
-./etcd -c 127.0.0.1:4003 -s 127.0.0.1:7003 -C 127.0.0.1:7001 -d nodes/node3 -n node3
+./etcd -s 127.0.0.1:7002 -c 127.0.0.1:4002 -C 127.0.0.1:7001 -d nodes/node2 -n node2
+./etcd -s 127.0.0.1:7003 -c 127.0.0.1:4003 -C 127.0.0.1:7001 -d nodes/node3 -n node3
 ```
 
 Get the machines in the cluster:
@@ -512,6 +512,7 @@ See [CONTRIBUTING](https://github.com/coreos/etcd/blob/master/CONTRIBUTING.md) f
 - [binocarlos/yoda](https://github.com/binocarlos/yoda) - etcd + ZeroMQ
 - [calavera/active-proxy](https://github.com/calavera/active-proxy) - HTTP Proxy configured with etcd
 - [derekchiang/etcdplus](https://github.com/derekchiang/etcdplus) - A set of distributed synchronization primitives built upon etcd
+- [go-discover](https://github.com/flynn/go-discover) - service discovery in Go
 - [gleicon/goreman](https://github.com/gleicon/goreman/tree/etcd) - Branch of the Go Foreman clone with etcd support
 - [garethr/hiera-etcd](https://github.com/garethr/hiera-etcd) - Puppet hiera backend using etcd
 - [mattn/etcd-vim](https://github.com/mattn/etcd-vim) - SET and GET keys from inside vim
@@ -530,6 +531,26 @@ Because of this majority voting property the ideal cluster should be kept small 
 Odd numbers are good because if you have 8 machines the majority will be 5 and if you have 9 machines the majority with be 5.
 The result is that an 8 machine cluster can tolerate 3 machine failures and a 9 machine cluster can tolerate 4 nodes failures.
 And in the best case when all 9 machines are responding the cluster will perform at the speed of the fastest 5 nodes.
+
+### Why SSLv3 alert handshake failure when using SSL client auth?
+The `TLS` pacakge of `golang` checks the key usage of certificate public key before using it. To use the certificate public key to do client auth, we need to add `clientAuth` to `Extended Key Usage` when creating the certificate public key.
+
+Here is how to do it:
+
+Add the following section to your openssl.cnf:
+
+```
+[ ssl_client ]                                                                                                                                            
+...
+  extendedKeyUsage = clientAuth
+...
+```
+
+When creating the cert be sure to reference it in the -extensions flag:
+
+```
+openssl ca -config openssl.cnf -policy policy_anything -extensions ssl_client -out certs/node.crt -infiles node.csr
+```
 
 ## Project Details
 

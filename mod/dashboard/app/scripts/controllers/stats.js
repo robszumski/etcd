@@ -23,13 +23,33 @@ angular.module('etcdStats', ['ngRoute', 'etcd'])
   function readStats() {
     EtcdV1.getStat('leader').get().success(function(data) {
       $scope.leaderStats = data;
-      $scope.followers = [];
-      $scope.followerNames = [];
+      $scope.leaderName = data.leader;
+      $scope.machines = [];
+      $scope.machineNames = [];
+      //hardcode leader stats
+      $scope.machines.push({
+        latency: {
+          average: 0,
+          current: 0,
+          minimum: 0,
+          maximum: 0,
+          standardDeviation: 0
+        },
+        name: data.leader
+      });
+      $scope.machineNames.push(data.leader);
       $.each(data.followers, function(index, value) {
         value.name = index;
-        $scope.followers.push(value);
-        $scope.followerNames.push(value.name);
+        $scope.machines.push(value);
+        $scope.machineNames.push(value.name);
       });
+      //sort array so machines don't jump when output
+      $scope.machines.sort(function(a, b){
+          if(a.name < b.name) return -1;
+          if(a.name > b.name) return 1;
+          return 0;
+      });
+      $scope.machineNames.sort();
       drawCubism();
     });
   }
@@ -48,7 +68,7 @@ angular.module('etcdStats', ['ngRoute', 'etcd'])
         chart({
           el: $scope.graphContainer,
           data: {
-            'stats': $scope.followers
+            'stats': $scope.machines
           }
         }).width(width).height(height).update();
       });
@@ -73,7 +93,7 @@ angular.module('etcdStats', ['ngRoute', 'etcd'])
         .call(context.rule());
 
     d3.select("#latency .etcd-graph-content").selectAll(".horizon")
-        .data($scope.followerNames.map(stock))
+        .data($scope.machineNames.map(stock))
       .enter().append("div", ".bottom")
         .attr("class", "horizon")
       .call(context.horizon());
@@ -87,9 +107,9 @@ angular.module('etcdStats', ['ngRoute', 'etcd'])
       var format = d3.time.format("%d-%b-%y");
       return context.metric(function(start, stop, step, callback) {
         var value = null;
-        $.each($scope.followers, function(index, follower) {
-          if(follower.name == name) {
-            value = follower.latency.current;
+        $.each($scope.machines, function(index, machine) {
+          if(machine.name == name) {
+            value = machine.latency.current;
           }
         });
         callback(null, [value]);
