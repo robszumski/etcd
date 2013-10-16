@@ -78,7 +78,8 @@ angular.module('etcdStats', ['ngRoute', 'etcd'])
 
   function drawCubism () {
     var context = cubism.context()
-        .serverDelay(.25 * 1000)
+        .serverDelay(500)
+        .clientDelay(500)
         .step(1 * 1000)
         .size(parseInt($($scope.graphContainer).width()));
 
@@ -112,7 +113,7 @@ angular.module('etcdStats', ['ngRoute', 'etcd'])
             value = machine.latency.current;
           }
         });
-        callback(null, [value]);
+        callback(null, [value,value]);
       }, name);
     }
   }
