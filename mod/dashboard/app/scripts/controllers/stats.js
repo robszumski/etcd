@@ -29,11 +29,11 @@ angular.module('etcdStats', ['ngRoute', 'etcd'])
       //hardcode leader stats
       $scope.machines.push({
         latency: {
-          average: 0,
-          current: 0,
-          minimum: 0,
-          maximum: 0,
-          standardDeviation: 0
+          average: null,
+          current: null,
+          minimum: null,
+          maximum: null,
+          standardDeviation: null
         },
         name: data.leader
       });
@@ -54,33 +54,11 @@ angular.module('etcdStats', ['ngRoute', 'etcd'])
     });
   }
 
-  function drawGraph () {
-    //hardcoded padding from chart json
-    var vertPadding = 30;
-    var horzPadding = 15;
-    //fetch width and height of graph area
-    var width = $($scope.graphContainer).width() - horzPadding;
-    var height = $($scope.graphContainer).height() - vertPadding;
-
-    // parse a spec and create a visualization view
-    function parse(spec) {
-      vg.parse.spec(spec, function(chart) {
-        chart({
-          el: $scope.graphContainer,
-          data: {
-            'stats': $scope.machines
-          }
-        }).width(width).height(height).update();
-      });
-    }
-    parse(statsVega);
-  }
-
   function drawCubism () {
     var context = cubism.context()
         .serverDelay(500)
         .clientDelay(500)
-        .step(1 * 1000)
+        .step(500)
         .size(parseInt($($scope.graphContainer).width()));
 
     d3.select("#latency").selectAll(".axis")
@@ -97,7 +75,7 @@ angular.module('etcdStats', ['ngRoute', 'etcd'])
         .data($scope.machineNames.map(stock))
       .enter().append("div", ".bottom")
         .attr("class", "horizon")
-      .call(context.horizon());
+      .call(context.horizon().colors(["#eee", "#74c476", "#31a354", "#006d2c", "#bdd7e7","#6baed6","#3182bd","#08519c"]));
 
     context.on("focus", function(i) {
       d3.selectAll(".value").style("right", i == null ? null : context.size() - i + "px");
@@ -111,6 +89,10 @@ angular.module('etcdStats', ['ngRoute', 'etcd'])
         $.each($scope.machines, function(index, machine) {
           if(machine.name == name) {
             value = machine.latency.current;
+            if(value == null) {
+              //hack to color the master a different color
+              value = -0.00000001
+            }
           }
         });
         callback(null, [value,value]);

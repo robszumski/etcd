@@ -675,7 +675,7 @@ body {
 
 			.etcd-container.etcd-stats .etcd-graph .etcd-graph-content {
 				position: absolute;
-				top: 28px;
+				top: 21px;
 			}
 
 	.etcd-container.etcd-stats table .etcd-latency {
@@ -715,10 +715,15 @@ body {
 			background-color: #00DB24;
 		}
 
+		.etcd-container.etcd-stats .etcd-list .etcd-square-blue {
+			background-color: #ccc;
+		}
+
 	.etcd-container.etcd-stats .etcd-list .etcd-machine-type {
 		color: #999;
 		padding-left: 3px;
 		font-size: 13px;
+		line-height: 100%;
 	}
 
 	.etcd-container.etcd-stats .etcd-list .etcd-latency-value {
