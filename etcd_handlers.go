@@ -88,6 +88,8 @@ func Multiplexer(w http.ResponseWriter, req *http.Request) error {
 	switch req.Method {
 	case "GET":
 		return GetHttpHandler(w, req)
+	case "OPTIONS":
+		return OptionsHttpHandler(w,req)
 	case "POST":
 		return SetHttpHandler(w, req)
 	case "PUT":
@@ -258,6 +260,17 @@ func StatsHttpHandler(w http.ResponseWriter, req *http.Request) error {
 	}
 
 	return nil
+}
+
+// Options Handler
+func OptionsHttpHandler(w http.ResponseWriter, req *http.Request) error {
+
+        debugf("[recv] OPTIONS", e.url, req.RemoteAddr)
+
+        w.WriteHeader(http.StatusOK)
+
+        return nil
+
 }
 
 // Get Handler
